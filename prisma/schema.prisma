@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model books {
+  author       String?
+  isbn         String  @id
+  price        Int?
+  publish_year Int?
+  publisher    String?
+  seller_id    String?
+  state        Int?
+  title        String
+  users        users?  @relation(fields: [seller_id], references: [id])
+  buy          buy[]
+}
+
+model buy {
+  book                       String?
+  buyer_id                   String?
+  id                         Int     @default(autoincrement()) @id
+  seller_id                  String?
+  books                      books?  @relation(fields: [book], references: [isbn])
+  users_buy_buyer_idTousers  users?  @relation("buy_buyer_idTousers", fields: [buyer_id], references: [id])
+  users_buy_seller_idTousers users?  @relation("buy_seller_idTousers", fields: [seller_id], references: [id])
+}
+
+model users {
+  email                       String
+  id                          String    @id
+  login_token                 String?   @unique
+  login_token_expiration_date DateTime?
+  name                        String
+  password_hash               String
+  phone_number                String?
+  books                       books[]
+  buy_buy_buyer_idTousers     buy[]     @relation("buy_buyer_idTousers")
+  buy_buy_seller_idTousers    buy[]     @relation("buy_seller_idTousers")
+}
